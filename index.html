@@ -2019,7 +2019,10 @@
                 }, 500);
             } else {
                 cred.style.display = 'none';
-                zone.innerHTML = `<button class="btn btn-login" onclick="toggleAuth(true, 'login')">เข้าสู่ระบบ</button><button class="btn btn-reg" onclick="toggleAuth(true, 'reg')">สมัครสมาชิก</button>`;
+                zone.innerHTML = `
+<button class="btn btn-login" onclick="toggleAuth(true, 'login')">เข้าสู่ระบบ</button>
+<button class="btn btn-reg" onclick="toggleAuth(true, 'reg')">สมัครสมาชิก</button>
+`;
             }
             syncAdmin();
         });
