@@ -610,55 +610,56 @@
             align-items: center;
             gap: 5px;
         }
+        
+        /* Bestseller Grid - Adjusted for LARGER size */
         .bestseller-grid {
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 15px;
+            grid-template-columns: repeat(5, 1fr); /* Changed from 7 to 5 for larger cards */
+            gap: 20px;
         }
-        @media (max-width: 1400px) { .bestseller-grid { grid-template-columns: repeat(6, 1fr); } }
-        @media (max-width: 1200px) { .bestseller-grid { grid-template-columns: repeat(5, 1fr); } }
-        @media (max-width: 992px) { .bestseller-grid { grid-template-columns: repeat(4, 1fr); } }
-        @media (max-width: 768px) { .bestseller-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; } }
+        @media (max-width: 1200px) { .bestseller-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 992px) { .bestseller-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 768px) { .bestseller-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; } }
         @media (max-width: 540px) { .bestseller-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
 
         .bestseller-card {
             background: white;
-            border-radius: 12px;
+            border-radius: 16px; /* Slightly larger radius */
             overflow: hidden;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             transition: var(--transition);
             border: 1px solid #f0f0f0;
             position: relative;
             cursor: pointer;
         }
         .bestseller-card:hover { 
-            transform: translateY(-5px); 
-            box-shadow: 0 8px 25px rgba(255, 140, 0, 0.2);
+            transform: translateY(-8px); 
+            box-shadow: 0 15px 35px rgba(255, 140, 0, 0.25);
         }
         .bestseller-card .prod-img-box {
-            padding-top: 75%;
+            padding-top: 80%; /* Slightly taller aspect ratio */
         }
         .bestseller-card .prod-info {
-            padding: 10px;
+            padding: 15px;
             text-align: center;
         }
         .bestseller-card .prod-info h4 {
-            font-size: 0.8rem;
+            font-size: 1rem; /* Increased font size */
             color: var(--dark);
-            margin-bottom: 4px;
+            margin-bottom: 8px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
         .bestseller-card .prod-info .price {
             color: var(--primary);
-            font-weight: 600;
-            font-size: 0.9rem;
+            font-weight: 700;
+            font-size: 1.1rem; /* Increased font size */
         }
         .bestseller-card .prod-info .sold-count {
             color: #999;
-            font-size: 0.7rem;
-            margin-top: 3px;
+            font-size: 0.8rem; /* Increased font size */
+            margin-top: 5px;
         }
 
         .hist-search-box { margin-bottom: 15px; }
@@ -1295,7 +1296,7 @@
             
             const sorted = Object.entries(productSalesCount)
                 .sort((a, b) => b[1] - a[1])
-                .slice(0, 7);
+                .slice(0, 5); // Changed from 7 to 5 to match grid columns
             
             if (sorted.length === 0) {
                 grid.innerHTML = '<p style="text-align:center; color:#999; grid-column: 1/-1; padding: 30px;">ยังไม่มีข้อมูลการขาย</p>';
