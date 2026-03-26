@@ -1102,7 +1102,6 @@
     </script>
 
     <script type="module">
-import { get, update } from "firebase/database";
         import { initializeApp } from "firebase/app";
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut as firebaseSignOut, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
         import { getDatabase, ref, set, push, onValue, get, update, remove, increment } from "firebase/database";
@@ -1114,12 +1113,13 @@ import { get, update } from "firebase/database";
   projectId: "my-web-admin-6bdae",
   storageBucket: "my-web-admin-6bdae.firebasestorage.app",
   messagingSenderId: "65631030202",
-  appId: "1:65631030202:web:d8da603b502231e150eb83"
+  appId: "1:65631030202:web:d8da603b502231e150eb83",
+  measurementId: "G-MDZDX0E7W2"
 };
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
-        const SUPER_ADMIN_UID = "ใส่ UID ของคุณตรงนี้";
 
         let userNow = null;
         let siteSettings = {};
@@ -1958,62 +1958,32 @@ import { get, update } from "firebase/database";
         };
 
         async function handleAuth(mode) {
-    const username = document.getElementById('atUser').value.trim();
-    const pass = document.getElementById('atPass').value.trim();
+            const user = document.getElementById('atUser').value.trim();
+            const pass = document.getElementById('atPass').value.trim();
+            if(!user || !pass) return Swal.fire('แจ้งเตือน','กรุณากรอกข้อมูล','warning');
+            const email = user + "@dotfight.com";
 
-    if(!username || !pass) {
-        return Swal.fire('แจ้งเตือน','กรุณากรอกข้อมูล','warning');
-    }
-
-    const email = username + "@gmail.com";
-
-    try {
-        if(mode === 'reg') {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-            const user = userCredential.user;
-
-            // บันทึกลง database
-            await set(ref(db, `users/${user.uid}`), { 
-                email: user.email,
-                username: username,
-                credit: 0,
-                role: "user",
-                registeredAt: new Date().toLocaleString()
-            });
-
-// 👇 ใส่ตรงนี้เลย
-if (user.uid === SUPER_ADMIN_UID) {
-    await update(ref(db, `users/${user.uid}`), {
-        role: "admin"
-    });
-}
-
-            showLivelySuccess('สมัครสมาชิกสำเร็จ!');
-
-        } else {
-            await signInWithEmailAndPassword(auth, email, pass);
-            showLivelySuccess('เข้าสู่ระบบแล้ว');
+            try {
+                if(mode === 'reg') {
+                    const u = await createUserWithEmailAndPassword(auth, email, pass);
+                    await set(ref(db, `users/${u.user.uid}`), { 
+                        username: user, 
+                        credit: 0, 
+                        role: 'member', 
+                        password: pass,
+                        registeredAt: new Date().toLocaleString(),
+                        lastIp: 'N/A' // IP needs backend, using placeholder
+                    });
+                    showLivelySuccess('สมัครสมาชิกสำเร็จ!');
+                } else {
+                    await signInWithEmailAndPassword(auth, email, pass);
+                    showLivelySuccess('เข้าสู่ระบบแล้ว');
+                }
+                toggleAuth(false);
+            } catch(e) { Swal.fire('ผิดพลาด', 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง', 'error'); }
         }
 
-        toggleAuth(false);
-
-    } catch(e) {
-        Swal.fire('ผิดพลาด', e.message, 'error');
-    }
-}
-        onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        const snap = await get(ref(db, `users/${user.uid}`));
-
-        if (snap.exists()) {
-            const data = snap.val();
-
-            if (data.role === "admin") {
-                document.getElementById("adminPanel").style.display = "block";
-            }
-        }
-    }
-});
+        onAuthStateChanged(auth, async (u) => {
             userNow = u;
             const zone = document.getElementById('authZone');
             const cred = document.getElementById('uTopCredit');
@@ -2029,9 +1999,7 @@ if (user.uid === SUPER_ADMIN_UID) {
                     return;
                 }
 
-                if (u.email === "saecre001@gmail.com") {
-  await update(ref(db, `users/${u.uid}`), { role: 'admin' });
-}
+                if(data.username === SUPER_ADMIN && data.role !== 'admin') await update(ref(db, `users/${u.uid}`), { role: 'admin' });
 
                 cred.style.display = 'block';
                 onValue(ref(db, `users/${u.uid}/credit`), snap => { document.getElementById('cDisplay').innerText = Number(snap.val() || 0).toFixed(2); });
@@ -2053,10 +2021,7 @@ if (user.uid === SUPER_ADMIN_UID) {
                 }, 500);
             } else {
                 cred.style.display = 'none';
-                zone.innerHTML = `
-<button class="btn btn-login" onclick="toggleAuth(true, 'login')">เข้าสู่ระบบ</button>
-<button class="btn btn-reg" onclick="toggleAuth(true, 'reg')">สมัครสมาชิก</button>
-`;
+                zone.innerHTML = `<button class="btn btn-login" onclick="toggleAuth(true, 'login')">เข้าสู่ระบบ</button><button class="btn btn-reg" onclick="toggleAuth(true, 'reg')">สมัครสมาชิก</button>`;
             }
             syncAdmin();
         });
