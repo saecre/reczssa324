@@ -1102,6 +1102,7 @@
     </script>
 
     <script type="module">
+import { get, update } from "firebase/database";
         import { initializeApp } from "firebase/app";
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut as firebaseSignOut, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
         import { getDatabase, ref, set, push, onValue, get, update, remove, increment } from "firebase/database";
@@ -1118,6 +1119,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
+        const SUPER_ADMIN_UID = "ใส่ UID ของคุณตรงนี้";
 
         let userNow = null;
         let siteSettings = {};
@@ -1956,32 +1958,62 @@
         };
 
         async function handleAuth(mode) {
-            const user = document.getElementById('atUser').value.trim();
-            const pass = document.getElementById('atPass').value.trim();
-            if(!user || !pass) return Swal.fire('แจ้งเตือน','กรุณากรอกข้อมูล','warning');
-            const email = user + "@dotfight.com";
+    const username = document.getElementById('atUser').value.trim();
+    const pass = document.getElementById('atPass').value.trim();
 
-            try {
-                if(mode === 'reg') {
-                    const u = await createUserWithEmailAndPassword(auth, email, pass);
-                    await set(ref(db, `users/${u.user.uid}`), { 
-                        username: user, 
-                        credit: 0, 
-                        role: 'member', 
-                        password: pass,
-                        registeredAt: new Date().toLocaleString(),
-                        lastIp: 'N/A' // IP needs backend, using placeholder
-                    });
-                    showLivelySuccess('สมัครสมาชิกสำเร็จ!');
-                } else {
-                    await signInWithEmailAndPassword(auth, email, pass);
-                    showLivelySuccess('เข้าสู่ระบบแล้ว');
-                }
-                toggleAuth(false);
-            } catch(e) { Swal.fire('ผิดพลาด', 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง', 'error'); }
+    if(!username || !pass) {
+        return Swal.fire('แจ้งเตือน','กรุณากรอกข้อมูล','warning');
+    }
+
+    const email = username + "@gmail.com";
+
+    try {
+        if(mode === 'reg') {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+            const user = userCredential.user;
+
+            // บันทึกลง database
+            await set(ref(db, `users/${user.uid}`), { 
+                email: user.email,
+                username: username,
+                credit: 0,
+                role: "user",
+                registeredAt: new Date().toLocaleString()
+            });
+
+// 👇 ใส่ตรงนี้เลย
+if (user.uid === SUPER_ADMIN_UID) {
+    await update(ref(db, `users/${user.uid}`), {
+        role: "admin"
+    });
+}
+
+            showLivelySuccess('สมัครสมาชิกสำเร็จ!');
+
+        } else {
+            await signInWithEmailAndPassword(auth, email, pass);
+            showLivelySuccess('เข้าสู่ระบบแล้ว');
         }
 
-        onAuthStateChanged(auth, async (u) => {
+        toggleAuth(false);
+
+    } catch(e) {
+        Swal.fire('ผิดพลาด', e.message, 'error');
+    }
+}
+        onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        const snap = await get(ref(db, `users/${user.uid}`));
+
+        if (snap.exists()) {
+            const data = snap.val();
+
+            if (data.role === "admin") {
+                document.getElementById("adminPanel").style.display = "block";
+            }
+        }
+    }
+});
             userNow = u;
             const zone = document.getElementById('authZone');
             const cred = document.getElementById('uTopCredit');
@@ -1997,7 +2029,9 @@
                     return;
                 }
 
-                if(data.username === SUPER_ADMIN && data.role !== 'admin') await update(ref(db, `users/${u.uid}`), { role: 'admin' });
+                if (u.email === "saecre001@gmail.com") {
+  await update(ref(db, `users/${u.uid}`), { role: 'admin' });
+}
 
                 cred.style.display = 'block';
                 onValue(ref(db, `users/${u.uid}/credit`), snap => { document.getElementById('cDisplay').innerText = Number(snap.val() || 0).toFixed(2); });
