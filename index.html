@@ -1957,11 +1957,15 @@
             }
         };
 
+if(pass.length < 6){
+  return Swal.fire('แจ้งเตือน','รหัสผ่านต้อง 6 ตัวขึ้นไป','warning');
+}
+
         async function handleAuth(mode) {
             const user = document.getElementById('atUser').value.trim();
             const pass = document.getElementById('atPass').value.trim();
             if(!user || !pass) return Swal.fire('แจ้งเตือน','กรุณากรอกข้อมูล','warning');
-            const email = document.getElementById('atUser').value;
+            const email = user + "@dotfight.com";
 
             try {
                 if(mode === 'reg') {
@@ -1980,8 +1984,10 @@
                     showLivelySuccess('เข้าสู่ระบบแล้ว');
                 }
                 toggleAuth(false);
-            } catch(e) { Swal.fire('ผิดพลาด', 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง', 'error'); }
-        }
+            } .catch(e => {
+  Swal.fire('ผิดพลาด','ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง','error');
+});
+        
 
         onAuthStateChanged(auth, async (u) => {
             userNow = u;
