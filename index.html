@@ -1961,13 +1961,15 @@ if(pass.length < 6){
   return Swal.fire('แจ้งเตือน','รหัสผ่านต้อง 6 ตัวขึ้นไป','warning');
 }
 
-        async function handleAuth(mode) {
+async function handleAuth(mode) {
   try {
+    console.log("MODE:", mode);
+
     const userEl = document.getElementById('atUser');
     const passEl = document.getElementById('atPass');
 
     if(!userEl || !passEl){
-      console.log("หา input ไม่เจอ");
+      console.log("❌ หา input ไม่เจอ");
       return;
     }
 
@@ -1983,7 +1985,7 @@ if(pass.length < 6){
     console.log("EMAIL:", email);
 
   } catch(e){
-    console.log("ERROR:", e);
+    console.log("🔥 ERROR:", e);
   }
 }
 
