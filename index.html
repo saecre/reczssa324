@@ -1091,7 +1091,7 @@
         </div>
     </div>
 
- <script type="module">
+  <script type="importmap">
 {
   "imports": {
     "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
@@ -1961,7 +1961,7 @@
             const user = document.getElementById('atUser').value.trim();
             const pass = document.getElementById('atPass').value.trim();
             if(!user || !pass) return Swal.fire('แจ้งเตือน','กรุณากรอกข้อมูล','warning');
-            const email = document.getElementById("email").value;
+            const email = document.getElementById('atUser').value;
 
             try {
                 if(mode === 'reg') {
