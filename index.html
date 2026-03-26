@@ -1965,7 +1965,7 @@ if(pass.length < 6){
             const user = document.getElementById('atUser').value.trim();
             const pass = document.getElementById('atPass').value.trim();
             if(!user || !pass) return Swal.fire('แจ้งเตือน','กรุณากรอกข้อมูล','warning');
-            const email = user + "@dotfight.com";
+            const email = user.replace(/\s+/g, '') + "@dotfight.com";
 
             try {
                 if(mode === 'reg') {
