@@ -1091,15 +1091,15 @@
         </div>
     </div>
 
-  <script type="importmap">
-{
-  "imports": {
-    "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
-    "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js",
-    "firebase/database": "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"
-  }
-}
-</script>
+    <script type="importmap">
+    {
+        "imports": {
+            "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+            "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js",
+            "firebase/database": "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"
+        }
+    }
+    </script>
 
     <script type="module">
         import { initializeApp } from "firebase/app";
@@ -1107,15 +1107,14 @@
         import { getDatabase, ref, set, push, onValue, get, update, remove, increment } from "firebase/database";
 
         const firebaseConfig = {
-  apiKey: "AIzaSyA20HEWW22jZYLriCtyb5Tsn8j_uO9Ma3I",
-  authDomain: "my-web-admin-6bdae.firebaseapp.com",
-  databaseURL: "https://my-web-admin-6bdae-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "my-web-admin-6bdae",
-  storageBucket: "my-web-admin-6bdae.firebasestorage.app",
-  messagingSenderId: "65631030202",
-  appId: "1:65631030202:web:d8da603b502231e150eb83",
-  measurementId: "G-MDZDX0E7W2"
-};
+            apiKey: "AIzaSyDE12sh8s5b1Ni7DAOMsZEZP6VdCmVUPCE",
+            authDomain: "dotfighr.firebaseapp.com",
+            databaseURL: "https://dotfighr-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "dotfighr",
+            storageBucket: "dotfighr.firebasestorage.app",
+            messagingSenderId: "443579973729",
+            appId: "1:443579973729:web:db56ac80cbb7fc8d046a20"
+        };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -1957,37 +1956,11 @@
             }
         };
 
-if(pass.length < 6){
-  return Swal.fire('แจ้งเตือน','รหัสผ่านต้อง 6 ตัวขึ้นไป','warning');
-}
-
-async function handleAuth(mode) {
-  try {
-    console.log("MODE:", mode);
-
-    const userEl = document.getElementById('atUser');
-    const passEl = document.getElementById('atPass');
-
-    if(!userEl || !passEl){
-      console.log("❌ หา input ไม่เจอ");
-      return;
-    }
-
-    const user = userEl.value.trim();
-    const pass = passEl.value.trim();
-
-    if(!user || !pass){
-      return Swal.fire('แจ้งเตือน','กรุณากรอกข้อมูล','warning');
-    }
-
-    const email = user.replace(/\s+/g, '') + "@dotfight.com";
-
-    console.log("EMAIL:", email);
-
-  } catch(e){
-    console.log("🔥 ERROR:", e);
-  }
-}
+        async function handleAuth(mode) {
+            const user = document.getElementById('atUser').value.trim();
+            const pass = document.getElementById('atPass').value.trim();
+            if(!user || !pass) return Swal.fire('แจ้งเตือน','กรุณากรอกข้อมูล','warning');
+            const email = user + "@dotfight.com";
 
             try {
                 if(mode === 'reg') {
@@ -2006,10 +1979,8 @@ async function handleAuth(mode) {
                     showLivelySuccess('เข้าสู่ระบบแล้ว');
                 }
                 toggleAuth(false);
-            } .catch(e => {
-  Swal.fire('ผิดพลาด','ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง','error');
-});
-        
+            } catch(e) { Swal.fire('ผิดพลาด', 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง', 'error'); }
+        }
 
         onAuthStateChanged(auth, async (u) => {
             userNow = u;
